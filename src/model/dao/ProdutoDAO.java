@@ -107,4 +107,32 @@ public class ProdutoDAO {
             ConnectionFactory.closeConnection(connection, stmt);
         }
     }
+    
+    public List<Produto> search(String descricao){
+        Connection connection = ConnectionFactory.getConnection();
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        List<Produto> produtos = new ArrayList<>();
+        
+        try {
+            stmt = connection.prepareStatement("SELECT * FROM produtos WHERE nome LIKE ?");
+            stmt.setString(1, ""+descricao+"%");
+            rs = stmt.executeQuery();
+            
+            while(rs.next()){
+                Produto p = new Produto();
+                
+                p.setId(rs.getInt(COL_ID));
+                p.setNome(rs.getString(COL_NOME));
+                
+                produtos.add(p);
+            }
+        } catch (SQLException ex) {
+            JOptionPane.showMessageDialog(null, "Erro ao carregar: "+ex);
+        }finally{
+            ConnectionFactory.closeConnection(connection, stmt, rs);
+        }        
+        return produtos;
+    }
 }

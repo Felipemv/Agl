@@ -5,11 +5,8 @@
  */
 package view;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import javax.swing.DefaultListModel;
-import javax.swing.JOptionPane;
 import model.bean.Produto;
 import model.dao.ProdutoDAO;
 
@@ -29,7 +26,10 @@ public class GerenciaBOM extends javax.swing.JFrame {
         initComponents();
         
         lblErroNomeProd.setVisible(false);
-        atualizarProdutos();
+        lblErroNomeMat.setVisible(false);
+        lblErroQuantMat.setVisible(false);
+        
+        carregarListaCompleta();
     }
 
     /**
@@ -51,10 +51,25 @@ public class GerenciaBOM extends javax.swing.JFrame {
         lblErroNomeProd = new javax.swing.JLabel();
         btEditarProd = new javax.swing.JButton();
         btExcluirProd = new javax.swing.JButton();
+        txtBuscaProd = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         tableMateriais = new javax.swing.JTable();
         btAtualizaMaterial = new javax.swing.JButton();
+        txtBuscaMate = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        txtCodMaterial = new javax.swing.JTextField();
+        jLabel3 = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        txtNomeMate = new javax.swing.JTextField();
+        txtQuantMaterial = new javax.swing.JTextField();
+        lblErroQuantMat = new javax.swing.JLabel();
+        lblErroNomeMat = new javax.swing.JLabel();
+        btAddMat = new javax.swing.JButton();
+        btExcluirMat = new javax.swing.JButton();
+        btEditarMat = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -108,27 +123,39 @@ public class GerenciaBOM extends javax.swing.JFrame {
             }
         });
 
+        txtBuscaProd.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                txtBuscaProdCaretUpdate(evt);
+            }
+        });
+
+        jLabel5.setText("Buscar: ");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addComponent(btAddProduto)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btEditarProd)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 56, Short.MAX_VALUE)
-                .addComponent(btExcluirProd))
-            .addComponent(txtNomeProduto)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btExcluirProd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(lblErroNomeProd)
-                .addGap(0, 0, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addComponent(jLabel1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtNomeProduto))
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(btAtualizaProduto))
-            .addComponent(jScrollPane1)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtBuscaProd))
         );
 
         jPanel1Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btAddProduto, btEditarProd, btExcluirProd});
@@ -138,19 +165,22 @@ public class GerenciaBOM extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(btAtualizaProduto)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtBuscaProd, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txtNomeProduto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 367, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(txtNomeProduto, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblErroNomeProd)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(77, 77, 77)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btAddProduto)
                     .addComponent(btEditarProd)
-                    .addComponent(btExcluirProd))
-                .addContainerGap())
+                    .addComponent(btExcluirProd)))
         );
 
         jPanel1Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btAddProduto, btEditarProd, btExcluirProd});
@@ -169,22 +199,94 @@ public class GerenciaBOM extends javax.swing.JFrame {
 
         btAtualizaMaterial.setText("Atualizar Materiais");
 
+        jLabel2.setText("Código: ");
+
+        jLabel3.setText("Nome: ");
+
+        jLabel4.setText("Quantidade:");
+
+        lblErroQuantMat.setForeground(new java.awt.Color(255, 0, 0));
+        lblErroQuantMat.setText("* Quantidade obrigatória");
+
+        lblErroNomeMat.setForeground(new java.awt.Color(255, 0, 0));
+        lblErroNomeMat.setText("* Nome obrigatório");
+
+        btAddMat.setText("Adicionar");
+
+        btExcluirMat.setText("Excluir");
+
+        btEditarMat.setText("Editar");
+
+        jLabel6.setText("Buscar: ");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 375, Short.MAX_VALUE)
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
             .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(lblErroNomeMat)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addComponent(btAddMat)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
+                .addComponent(btEditarMat)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                .addComponent(btExcluirMat))
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(txtCodMaterial)
+                        .addGap(87, 87, 87)
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txtQuantMaterial))
+                    .addComponent(txtNomeMate, javax.swing.GroupLayout.Alignment.LEADING)))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(btAtualizaMaterial))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btAtualizaMaterial, javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(lblErroQuantMat)
+                        .addContainerGap())))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addComponent(jLabel6)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtBuscaMate))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(btAtualizaMaterial)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 320, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(103, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtBuscaMate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(txtCodMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4)
+                    .addComponent(txtQuantMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblErroQuantMat)
+                .addGap(4, 4, 4)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3)
+                    .addComponent(txtNomeMate, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblErroNomeMat)
+                .addGap(33, 33, 33)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btAddMat)
+                    .addComponent(btExcluirMat)
+                    .addComponent(btEditarMat)))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -198,8 +300,8 @@ public class GerenciaBOM extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
@@ -207,7 +309,8 @@ public class GerenciaBOM extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btAtualizaProdutoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btAtualizaProdutoMouseClicked
-        atualizarProdutos();
+        carregarListaCompleta();
+        txtBuscaProd.setText("");
     }//GEN-LAST:event_btAtualizaProdutoMouseClicked
 
     private void txtNomeProdutoCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtNomeProdutoCaretUpdate
@@ -225,7 +328,7 @@ public class GerenciaBOM extends javax.swing.JFrame {
         
             p.setNome(nome);
             dao.create(p);
-            atualizarProdutos();
+            carregarListaCompleta();
         }
     }//GEN-LAST:event_btAddProdutoMouseClicked
 
@@ -242,7 +345,7 @@ public class GerenciaBOM extends javax.swing.JFrame {
         p.setNome(txtNomeProduto.getText());
         
         dao.update(p);
-        atualizarProdutos();
+        carregarListaCompleta();
     }//GEN-LAST:event_btEditarProdMouseClicked
 
     private void btExcluirProdMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btExcluirProdMouseClicked
@@ -253,8 +356,18 @@ public class GerenciaBOM extends javax.swing.JFrame {
         p.setId(list.get(index).getId());
         
         dao.delete(p);
-        atualizarProdutos();
+        carregarListaCompleta();
     }//GEN-LAST:event_btExcluirProdMouseClicked
+
+    private void txtBuscaProdCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtBuscaProdCaretUpdate
+        // TODO add your handling code here:
+        ProdutoDAO dao = new ProdutoDAO();
+        
+        list.clear();
+        list = dao.search(txtBuscaProd.getText());
+        
+        carregarListaBusca(txtBuscaProd.getText());  
+    }//GEN-LAST:event_txtBuscaProdCaretUpdate
 
     /**
      * @param args the command line arguments
@@ -290,25 +403,52 @@ public class GerenciaBOM extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btAddMat;
     private javax.swing.JButton btAddProduto;
     private javax.swing.JButton btAtualizaMaterial;
     private javax.swing.JButton btAtualizaProduto;
+    private javax.swing.JButton btEditarMat;
     private javax.swing.JButton btEditarProd;
+    private javax.swing.JButton btExcluirMat;
     private javax.swing.JButton btExcluirProd;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JLabel lblErroNomeMat;
     private javax.swing.JLabel lblErroNomeProd;
+    private javax.swing.JLabel lblErroQuantMat;
     private javax.swing.JList<String> listProdutos;
     private javax.swing.JTable tableMateriais;
+    private javax.swing.JTextField txtBuscaMate;
+    private javax.swing.JTextField txtBuscaProd;
+    private javax.swing.JTextField txtCodMaterial;
+    private javax.swing.JTextField txtNomeMate;
     private javax.swing.JTextField txtNomeProduto;
+    private javax.swing.JTextField txtQuantMaterial;
     // End of variables declaration//GEN-END:variables
 
-    private void atualizarProdutos() {
+    private void carregarListaCompleta(){
         ProdutoDAO dao = new ProdutoDAO();
-        list = dao.read();
+        List<Produto> prod = dao.read();
+        atualizarProdutos(prod);
+    }
+    
+    private void carregarListaBusca(String nome){
+        ProdutoDAO dao = new ProdutoDAO();
+        List<Produto> prod = dao.search(nome);
+        atualizarProdutos(prod);
+    }
+    
+    private void atualizarProdutos(List<Produto> prod) {
+        ProdutoDAO dao = new ProdutoDAO();
+        list = prod;
         
         dlm = (DefaultListModel) listProdutos.getModel();
         
