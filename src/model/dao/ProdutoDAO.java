@@ -29,12 +29,25 @@ public class ProdutoDAO {
     public void create(Produto p) {
         Connection connection = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
+        ResultSet rs = null;
 
         try {
-            stmt = connection.prepareStatement("INSERT INTO produtos(nome) VALUES(?)");
-            stmt.setString(1, p.getNome());
+            stmt = connection.prepareStatement("SELECT * FROM produtos WHERE nome LIKE ?");
+            stmt.setString(1, ""+p.getNome()+"%");
+            rs = stmt.executeQuery();
             
-            stmt.executeUpdate();
+            if(!rs.first()){
+                stmt = null;
+                stmt = connection.prepareStatement("INSERT INTO produtos(nome) VALUES(?)");
+                stmt.setString(1, p.getNome());
+            
+                stmt.executeUpdate();
+            }else{
+                JOptionPane.showMessageDialog(null, "O produto cadastrado já existe");
+                return;
+            }
+            
+            
             
             JOptionPane.showMessageDialog(null, "Salvo com sucesso!");
         } catch (SQLException ex) {
