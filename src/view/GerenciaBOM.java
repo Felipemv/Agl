@@ -7,9 +7,11 @@ package view;
 
 import java.util.List;
 import javax.swing.DefaultListModel;
-import javax.swing.table.DefaultTableModel;
+import javax.swing.JOptionPane;
 import model.bean.Material;
+import model.bean.MaterialTabela;
 import model.bean.Produto;
+import model.dao.MaterialDAO;
 import model.dao.ProdutoDAO;
 
 /**
@@ -17,23 +19,23 @@ import model.dao.ProdutoDAO;
  * @author Usuário
  */
 public class GerenciaBOM extends javax.swing.JFrame {
-    
+
     DefaultListModel dlm = new DefaultListModel();
-    DefaultTableModel dtm = new DefaultTableModel();
-    
+    MaterialTabela model = new MaterialTabela();
+
     List<Produto> listProd;
     List<Material> listMat;
+
     /**
      * Creates new form GerenciaBOM
      */
     public GerenciaBOM() {
         initComponents();
-        
+
 //        lblErroNomeProd.setVisible(false);
 //        lblErroNomeMat.setVisible(false);
 //        lblErroQuantMat.setVisible(false);
-        
-        carregarListaCompleta();
+        carregarListaProdCompleta();
     }
 
     /**
@@ -75,6 +77,7 @@ public class GerenciaBOM extends javax.swing.JFrame {
         jLabel6 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Gerenciar B.O.M.");
 
         jPanel1.setBorder(javax.swing.BorderFactory.createTitledBorder("Produtos"));
 
@@ -146,7 +149,7 @@ public class GerenciaBOM extends javax.swing.JFrame {
                 .addComponent(btEditarProd)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btExcluirProd, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 381, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 366, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(btAtualizaProduto))
@@ -190,18 +193,29 @@ public class GerenciaBOM extends javax.swing.JFrame {
 
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder("Materiais"));
 
-        tableMateriais.setModel(dtm);
+        tableMateriais.setAutoCreateRowSorter(true);
+        tableMateriais.setModel(model);
+        tableMateriais.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tableMateriais.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tableMateriaisMouseClicked(evt);
+            }
+        });
+        tableMateriais.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                tableMateriaisKeyReleased(evt);
+            }
+        });
         jScrollPane2.setViewportView(tableMateriais);
 
         btAtualizaMaterial.setText("Atualizar Materiais");
-
-        jLabel2.setText("Código: ");
-
-        txtCodMaterial.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtCodMaterialActionPerformed(evt);
+        btAtualizaMaterial.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btAtualizaMaterialMouseClicked(evt);
             }
         });
+
+        jLabel2.setText("Código: ");
 
         jLabel3.setText("Nome: ");
 
@@ -213,10 +227,25 @@ public class GerenciaBOM extends javax.swing.JFrame {
         lblErroNomeMat.setVisible(false);
 
         btAddMat.setText("Adicionar");
+        btAddMat.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btAddMatMouseClicked(evt);
+            }
+        });
 
         btExcluirMat.setText("Excluir");
+        btExcluirMat.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btExcluirMatMouseClicked(evt);
+            }
+        });
 
         btEditarMat.setText("Editar");
+        btEditarMat.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btEditarMatMouseClicked(evt);
+            }
+        });
 
         jLabel6.setText("Buscar: ");
 
@@ -224,12 +253,11 @@ public class GerenciaBOM extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(btAddMat)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
                 .addComponent(btEditarMat)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 61, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
                 .addComponent(btExcluirMat))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -252,7 +280,11 @@ public class GerenciaBOM extends javax.swing.JFrame {
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
                 .addComponent(btAtualizaMaterial))
+            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
         );
+
+        jPanel2Layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {btAddMat, btEditarMat, btExcluirMat});
+
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
@@ -282,6 +314,8 @@ public class GerenciaBOM extends javax.swing.JFrame {
                     .addComponent(btEditarMat)))
         );
 
+        jPanel2Layout.linkSize(javax.swing.SwingConstants.VERTICAL, new java.awt.Component[] {btAddMat, btEditarMat, btExcluirMat});
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -302,7 +336,7 @@ public class GerenciaBOM extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btAtualizaProdutoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btAtualizaProdutoMouseClicked
-        carregarListaCompleta();
+        carregarListaProdCompleta();
         txtBuscaProd.setText("");
     }//GEN-LAST:event_btAtualizaProdutoMouseClicked
 
@@ -313,58 +347,175 @@ public class GerenciaBOM extends javax.swing.JFrame {
     private void btAddProdutoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btAddProdutoMouseClicked
         // TODO add your handling code here:
         String nome = txtNomeProduto.getText();
-        if(nome.trim().equals("")){
+        if (nome.trim().equals("")) {
             lblErroNomeProd.setVisible(true);
-        }else{
+        } else {
             Produto p = new Produto();
             ProdutoDAO dao = new ProdutoDAO();
-        
+
             p.setNome(nome);
             dao.create(p);
-            carregarListaCompleta();
+            carregarListaProdCompleta();
         }
     }//GEN-LAST:event_btAddProdutoMouseClicked
 
     private void listProdutosValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listProdutosValueChanged
         txtNomeProduto.setText(listProdutos.getSelectedValue());
+        int index = listProdutos.getSelectedIndex();
+        carregarListaMatCompleta(listProd.get(index).getId());
     }//GEN-LAST:event_listProdutosValueChanged
 
     private void btEditarProdMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btEditarProdMouseClicked
-        Produto p = new Produto();
-        ProdutoDAO dao = new ProdutoDAO();
-        
         int index = listProdutos.getSelectedIndex();
-        p.setId(listProd.get(index).getId());
-        p.setNome(txtNomeProduto.getText());
-        
-        dao.update(p);
-        carregarListaCompleta();
+
+        if (index != -1) {
+            Produto p = new Produto();
+            ProdutoDAO dao = new ProdutoDAO();
+
+            p.setId(listProd.get(index).getId());
+            p.setNome(txtNomeProduto.getText());
+
+            dao.update(p);
+            carregarListaProdCompleta();
+        }else{
+            JOptionPane.showMessageDialog(null, "Nenhum produto selecionado!");
+        }
+
     }//GEN-LAST:event_btEditarProdMouseClicked
 
     private void btExcluirProdMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btExcluirProdMouseClicked
-        Produto p = new Produto();
-        ProdutoDAO dao = new ProdutoDAO();
-        
         int index = listProdutos.getSelectedIndex();
-        p.setId(listProd.get(index).getId());
-        
-        dao.delete(p);
-        carregarListaCompleta();
+
+        if (index != -1) {
+            Produto p = new Produto();
+            ProdutoDAO dao = new ProdutoDAO();
+
+            p.setId(listProd.get(index).getId());
+
+            dao.delete(p);
+            carregarListaProdCompleta();
+        } else {
+            JOptionPane.showMessageDialog(null, "Nenhum produto selecionado!");
+        }
     }//GEN-LAST:event_btExcluirProdMouseClicked
 
     private void txtBuscaProdCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtBuscaProdCaretUpdate
         // TODO add your handling code here:
         ProdutoDAO dao = new ProdutoDAO();
-        
+
         listProd.clear();
         listProd = dao.search(txtBuscaProd.getText());
-        
-        carregarListaBusca(txtBuscaProd.getText());  
+
+        carregarListaProdBusca(txtBuscaProd.getText());
     }//GEN-LAST:event_txtBuscaProdCaretUpdate
 
-    private void txtCodMaterialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtCodMaterialActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_txtCodMaterialActionPerformed
+    private void btAddMatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btAddMatMouseClicked
+        int index = listProdutos.getSelectedIndex();
+        
+        if (index != -1) {
+            String cod = txtCodMaterial.getText();
+            String nome = txtNomeMate.getText();
+            String quant = txtQuantMaterial.getText();
+
+            if (nome.trim().equals("")) {
+                lblErroNomeMat.setVisible(true);
+                lblErroNomeMat.setText("* Nome obrigatório");
+            } else if (quant.trim().equals("")) {
+                lblErroNomeMat.setVisible(true);
+                lblErroNomeMat.setText("* Quantidade obrigatória");
+            } else {                
+                Material m = new Material();
+                
+                m.setId_produto(listProd.get(index).getId());
+                m.setCod(Integer.parseInt(cod));
+                m.setNome(nome);
+                m.setQuant(Integer.parseInt(quant));
+
+                MaterialDAO dao = new MaterialDAO();
+                dao.create(m);
+                carregarListaMatCompleta(listProd.get(index).getId());
+            }
+        } else {
+            JOptionPane.showMessageDialog(null, "Nenhum produto selecionado!");
+        }
+
+    }//GEN-LAST:event_btAddMatMouseClicked
+
+    private void btAtualizaMaterialMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btAtualizaMaterialMouseClicked
+        int index = listProdutos.getSelectedIndex();
+
+        if (index != -1) {
+            carregarListaMatCompleta(listProd.get(index).getId());
+        } else {
+            JOptionPane.showMessageDialog(null, "Nenhum produto selecionado!");
+        }
+    }//GEN-LAST:event_btAtualizaMaterialMouseClicked
+
+    private void tableMateriaisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tableMateriaisKeyReleased
+        int index = tableMateriais.getSelectedRow();
+        
+        if(index != -1){
+            String cod = tableMateriais.getValueAt(index, 0).toString();
+            String nome = tableMateriais.getValueAt(index, 1).toString();
+            String quant = tableMateriais.getValueAt(index, 2).toString();
+                        
+            txtCodMaterial.setText(cod);
+            txtNomeMate.setText(nome);
+            txtQuantMaterial.setText(quant);
+        }
+    
+    }//GEN-LAST:event_tableMateriaisKeyReleased
+
+    private void tableMateriaisMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableMateriaisMouseClicked
+        int index = tableMateriais.getSelectedRow();
+        
+        if(index != -1){
+            String cod = tableMateriais.getValueAt(index, 0).toString();
+            String nome = tableMateriais.getValueAt(index, 1).toString();
+            String quant = tableMateriais.getValueAt(index, 2).toString();
+                        
+            txtCodMaterial.setText(cod);
+            txtNomeMate.setText(nome);
+            txtQuantMaterial.setText(quant);
+        }
+    }//GEN-LAST:event_tableMateriaisMouseClicked
+
+    private void btEditarMatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btEditarMatMouseClicked
+        int index = tableMateriais.getSelectedRow();
+        int idProd = listProdutos.getSelectedIndex();
+
+        if (index != -1) {
+            Material m = new Material();
+            MaterialDAO dao = new MaterialDAO();
+
+            m.setId(listMat.get(index).getId());
+            m.setNome(txtNomeMate.getText());
+            m.setCod(Long.parseLong(txtCodMaterial.getText()));
+            m.setQuant(Integer.parseInt(txtQuantMaterial.getText()));
+
+            dao.update(m);
+            carregarListaMatCompleta(listProd.get(idProd).getId());
+        }else{
+            JOptionPane.showMessageDialog(null, "Nenhum Material selecionado!");
+        }
+    }//GEN-LAST:event_btEditarMatMouseClicked
+
+    private void btExcluirMatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btExcluirMatMouseClicked
+        int index = tableMateriais.getSelectedRow();
+        int idProd = listProdutos.getSelectedIndex();
+
+        if (index != -1) {
+            Material m = new Material();
+            MaterialDAO dao = new MaterialDAO();
+
+            m.setId(listMat.get(index).getId());
+
+            dao.delete(m);
+            carregarListaMatCompleta(listProd.get(idProd).getId());
+        } else {
+            JOptionPane.showMessageDialog(null, "Nenhum produto selecionado!");
+        }
+    }//GEN-LAST:event_btExcluirMatMouseClicked
 
     /**
      * @param args the command line arguments
@@ -430,27 +581,47 @@ public class GerenciaBOM extends javax.swing.JFrame {
     private javax.swing.JTextField txtQuantMaterial;
     // End of variables declaration//GEN-END:variables
 
-    private void carregarListaCompleta(){
+    private void carregarListaProdCompleta() {
         ProdutoDAO dao = new ProdutoDAO();
         List<Produto> prod = dao.read();
         atualizarProdutos(prod);
     }
-    
-    private void carregarListaBusca(String nome){
+
+    private void carregarListaProdBusca(String nome) {
         ProdutoDAO dao = new ProdutoDAO();
         List<Produto> prod = dao.search(nome);
         atualizarProdutos(prod);
     }
-    
+
     private void atualizarProdutos(List<Produto> prod) {
         ProdutoDAO dao = new ProdutoDAO();
         listProd = prod;
-        
+
         dlm = (DefaultListModel) listProdutos.getModel();
-        
+
         dlm.clear();
         for (int i = 0; i < listProd.size(); i++) {
             dlm.add(i, listProd.get(i).getNome());
         }
+    }
+
+    private void carregarListaMatBusca(String nome) {
+        MaterialDAO dao = new MaterialDAO();
+        List<Material> mat = dao.search(nome);
+        atualizarMateriais(mat);
+    }
+
+    private void carregarListaMatCompleta(int index) {
+        MaterialDAO dao = new MaterialDAO();
+        List<Material> mat = dao.read(index);
+        atualizarMateriais(mat);
+    }
+
+    private void atualizarMateriais(List<Material> mat) {
+        MaterialDAO dao = new MaterialDAO();
+        listMat = mat;
+        model = new MaterialTabela(listMat);
+
+        tableMateriais.setModel(model);
     }
 }
