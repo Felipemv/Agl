@@ -137,11 +137,10 @@ public class MaterialDAO {
         List<Material> materiais = new ArrayList<>();
         
         try {
-            stmt = connection.prepareStatement("SELECT * FROM materiais WHERE id_prod = ? and (cod LIKE ? OR nome LIKE ? OR quant LIKE ?)");
+            stmt = connection.prepareStatement("SELECT * FROM materiais WHERE id_prod = ? and (cod LIKE ? OR nome LIKE ?)");
             stmt.setInt(1, index);
             stmt.setString(2, descricao+"%");
             stmt.setString(3, descricao+"%");
-            stmt.setInt(4, Integer.parseInt(descricao));
             rs = stmt.executeQuery();
             
             while(rs.next()){

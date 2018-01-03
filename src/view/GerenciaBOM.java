@@ -435,7 +435,6 @@ public class GerenciaBOM extends javax.swing.JFrame {
         if (index != -1) {
             String cod = txtCodMaterial.getText();
             String nome = txtNomeMate.getText();
-            System.out.println(spnQuantMat.getValue());
             int quant = (Integer) spnQuantMat.getValue();
 
             if (nome.trim().equals("")) {

@@ -111,6 +111,11 @@ public class ProdutoDAO {
             
             stmt.executeUpdate();
             
+            stmt = connection.prepareStatement("DELETE FROM materiais WHERE id_prod = ?");
+            stmt.setInt(1, p.getId());
+            
+            stmt.executeUpdate();
+                        
             JOptionPane.showMessageDialog(null, "Excluído com sucesso!");
         } catch (SQLException ex) {
             JOptionPane.showMessageDialog(null, "Erro ao excluir: "+ex);
