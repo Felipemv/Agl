@@ -41,7 +41,7 @@ public class MaterialDAO {
                 stmt = null;
                 stmt = connection.prepareStatement("INSERT INTO materiais(id_prod, cod, nome, quant) VALUES(?, ?, ?, ?)");
                 stmt.setInt(1, m.getId_produto());
-                stmt.setLong(2, m.getCod());
+                stmt.setString(2, m.getCod());
                 stmt.setString(3, m.getNome());
                 stmt.setInt(4, m.getQuant());
             
@@ -76,7 +76,7 @@ public class MaterialDAO {
                 
                 m.setId(rs.getInt(COL_ID));
                 m.setId_produto(rs.getInt(COL_ID_PROD));
-                m.setCod(rs.getLong(COL_COD));
+                m.setCod(rs.getString(COL_COD));
                 m.setNome(rs.getString(COL_NOME));
                 m.setQuant(rs.getInt(COL_QUANT));
                                 
@@ -96,7 +96,7 @@ public class MaterialDAO {
 
         try {
             stmt = connection.prepareStatement("UPDATE materiais SET cod = ?, nome = ?, quant = ? WHERE id = ?");            
-            stmt.setLong(1, m.getCod());
+            stmt.setString(1, m.getCod());
             stmt.setString(2, m.getNome());
             stmt.setInt(3, m.getQuant());
             stmt.setInt(4, m.getId());
@@ -129,7 +129,7 @@ public class MaterialDAO {
         }
     }
     
-    public List<Material> search(String descricao){
+    public List<Material> search(String descricao, int index){
         Connection connection = ConnectionFactory.getConnection();
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -137,10 +137,11 @@ public class MaterialDAO {
         List<Material> materiais = new ArrayList<>();
         
         try {
-            stmt = connection.prepareStatement("SELECT * FROM materiais WHERE cod LIKE ? OR nome LIKE ? OR quant LIKE ?");
-            stmt.setString(1, descricao+"%");
+            stmt = connection.prepareStatement("SELECT * FROM materiais WHERE id_prod = ? and (cod LIKE ? OR nome LIKE ? OR quant LIKE ?)");
+            stmt.setInt(1, index);
             stmt.setString(2, descricao+"%");
             stmt.setString(3, descricao+"%");
+            stmt.setInt(4, Integer.parseInt(descricao));
             rs = stmt.executeQuery();
             
             while(rs.next()){
@@ -148,7 +149,7 @@ public class MaterialDAO {
                 
                 m.setId(rs.getInt(COL_ID));
                 m.setId_produto(rs.getInt(COL_ID_PROD));
-                m.setCod(rs.getLong(COL_COD));
+                m.setCod(rs.getString(COL_COD));
                 m.setNome(rs.getString(COL_NOME));
                 m.setQuant(rs.getInt(COL_QUANT));
                 

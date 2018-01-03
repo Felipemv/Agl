@@ -222,10 +222,10 @@
                   <Group type="103" groupAlignment="0" attributes="0">
                       <Group type="102" attributes="0">
                           <Component id="txtCodMaterial" max="32767" attributes="0"/>
-                          <EmptySpace min="-2" pref="87" max="-2" attributes="0"/>
+                          <EmptySpace min="-2" pref="115" max="-2" attributes="0"/>
                           <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
-                          <EmptySpace min="-2" max="-2" attributes="0"/>
-                          <Component id="txtQuantMaterial" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="spnQuantMat" min="-2" pref="76" max="-2" attributes="0"/>
                       </Group>
                       <Component id="txtNomeMate" max="32767" attributes="0"/>
                   </Group>
@@ -259,7 +259,7 @@
                       <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="txtCodMaterial" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="jLabel4" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="txtQuantMaterial" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="spnQuantMat" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
@@ -318,6 +318,9 @@
           </Events>
         </Component>
         <Component class="javax.swing.JTextField" name="txtBuscaMate">
+          <Events>
+            <EventHandler event="caretUpdate" listener="javax.swing.event.CaretListener" parameters="javax.swing.event.CaretEvent" handler="txtBuscaMateCaretUpdate"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel2">
           <Properties>
@@ -337,8 +340,6 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JTextField" name="txtNomeMate">
-        </Component>
-        <Component class="javax.swing.JTextField" name="txtQuantMaterial">
         </Component>
         <Component class="javax.swing.JLabel" name="lblErroNomeMat">
           <Properties>
@@ -380,6 +381,11 @@
           <Properties>
             <Property name="text" type="java.lang.String" value="Buscar: "/>
           </Properties>
+        </Component>
+        <Component class="javax.swing.JSpinner" name="spnQuantMat">
+          <Events>
+            <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="spnQuantMatStateChanged"/>
+          </Events>
         </Component>
       </SubComponents>
     </Container>

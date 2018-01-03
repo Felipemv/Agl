@@ -12,7 +12,7 @@ package model.bean;
 public class Material {
     private int id;
     private int id_produto;
-    private long cod;
+    private String cod;
     private String nome;
     private int quant;
 
@@ -32,11 +32,11 @@ public class Material {
         this.id_produto = id_produto;
     }
 
-    public long getCod() {
+    public String getCod() {
         return cod;
     }
 
-    public void setCod(long cod) {
+    public void setCod(String cod) {
         this.cod = cod;
     }
 

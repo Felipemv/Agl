@@ -69,12 +69,12 @@ public class GerenciaBOM extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         txtNomeMate = new javax.swing.JTextField();
-        txtQuantMaterial = new javax.swing.JTextField();
         lblErroNomeMat = new javax.swing.JLabel();
         btAddMat = new javax.swing.JButton();
         btExcluirMat = new javax.swing.JButton();
         btEditarMat = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
+        spnQuantMat = new javax.swing.JSpinner();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Gerenciar B.O.M.");
@@ -215,6 +215,12 @@ public class GerenciaBOM extends javax.swing.JFrame {
             }
         });
 
+        txtBuscaMate.addCaretListener(new javax.swing.event.CaretListener() {
+            public void caretUpdate(javax.swing.event.CaretEvent evt) {
+                txtBuscaMateCaretUpdate(evt);
+            }
+        });
+
         jLabel2.setText("Código: ");
 
         jLabel3.setText("Nome: ");
@@ -249,6 +255,12 @@ public class GerenciaBOM extends javax.swing.JFrame {
 
         jLabel6.setText("Buscar: ");
 
+        spnQuantMat.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                spnQuantMatStateChanged(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -267,10 +279,10 @@ public class GerenciaBOM extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(txtCodMaterial)
-                        .addGap(87, 87, 87)
+                        .addGap(115, 115, 115)
                         .addComponent(jLabel4)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txtQuantMaterial))
+                        .addComponent(spnQuantMat, javax.swing.GroupLayout.PREFERRED_SIZE, 76, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(txtNomeMate)))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
                 .addComponent(jLabel6)
@@ -300,7 +312,7 @@ public class GerenciaBOM extends javax.swing.JFrame {
                     .addComponent(jLabel2)
                     .addComponent(txtCodMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel4)
-                    .addComponent(txtQuantMaterial, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(spnQuantMat, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(24, 24, 24)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
@@ -338,6 +350,10 @@ public class GerenciaBOM extends javax.swing.JFrame {
     private void btAtualizaProdutoMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btAtualizaProdutoMouseClicked
         carregarListaProdCompleta();
         txtBuscaProd.setText("");
+
+        if (listProd.size() > 0) {
+            listProdutos.setSelectedIndex(0);
+        }
     }//GEN-LAST:event_btAtualizaProdutoMouseClicked
 
     private void txtNomeProdutoCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtNomeProdutoCaretUpdate
@@ -362,7 +378,10 @@ public class GerenciaBOM extends javax.swing.JFrame {
     private void listProdutosValueChanged(javax.swing.event.ListSelectionEvent evt) {//GEN-FIRST:event_listProdutosValueChanged
         txtNomeProduto.setText(listProdutos.getSelectedValue());
         int index = listProdutos.getSelectedIndex();
-        carregarListaMatCompleta(listProd.get(index).getId());
+        if (index != -1) {
+            carregarListaMatCompleta(listProd.get(index).getId());
+        }
+
     }//GEN-LAST:event_listProdutosValueChanged
 
     private void btEditarProdMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btEditarProdMouseClicked
@@ -377,7 +396,7 @@ public class GerenciaBOM extends javax.swing.JFrame {
 
             dao.update(p);
             carregarListaProdCompleta();
-        }else{
+        } else {
             JOptionPane.showMessageDialog(null, "Nenhum produto selecionado!");
         }
 
@@ -394,42 +413,44 @@ public class GerenciaBOM extends javax.swing.JFrame {
 
             dao.delete(p);
             carregarListaProdCompleta();
+            if (listProd.size() > 0) {
+                listProdutos.setSelectedIndex(0);
+            }
         } else {
             JOptionPane.showMessageDialog(null, "Nenhum produto selecionado!");
         }
     }//GEN-LAST:event_btExcluirProdMouseClicked
 
     private void txtBuscaProdCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtBuscaProdCaretUpdate
-        // TODO add your handling code here:
+        String busca = txtBuscaProd.getText();
         ProdutoDAO dao = new ProdutoDAO();
 
         listProd.clear();
-        listProd = dao.search(txtBuscaProd.getText());
-
-        carregarListaProdBusca(txtBuscaProd.getText());
+        carregarListaProdBusca(busca);
     }//GEN-LAST:event_txtBuscaProdCaretUpdate
 
     private void btAddMatMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btAddMatMouseClicked
         int index = listProdutos.getSelectedIndex();
-        
+
         if (index != -1) {
             String cod = txtCodMaterial.getText();
             String nome = txtNomeMate.getText();
-            String quant = txtQuantMaterial.getText();
+            System.out.println(spnQuantMat.getValue());
+            int quant = (Integer) spnQuantMat.getValue();
 
             if (nome.trim().equals("")) {
                 lblErroNomeMat.setVisible(true);
                 lblErroNomeMat.setText("* Nome obrigatório");
-            } else if (quant.trim().equals("")) {
+            } else if (quant == 0) {
                 lblErroNomeMat.setVisible(true);
                 lblErroNomeMat.setText("* Quantidade obrigatória");
-            } else {                
+            } else {
                 Material m = new Material();
-                
+
                 m.setId_produto(listProd.get(index).getId());
-                m.setCod(Integer.parseInt(cod));
+                m.setCod(cod);
                 m.setNome(nome);
-                m.setQuant(Integer.parseInt(quant));
+                m.setQuant(quant);
 
                 MaterialDAO dao = new MaterialDAO();
                 dao.create(m);
@@ -453,30 +474,30 @@ public class GerenciaBOM extends javax.swing.JFrame {
 
     private void tableMateriaisKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_tableMateriaisKeyReleased
         int index = tableMateriais.getSelectedRow();
-        
-        if(index != -1){
+
+        if (index != -1) {
             String cod = tableMateriais.getValueAt(index, 0).toString();
             String nome = tableMateriais.getValueAt(index, 1).toString();
             String quant = tableMateriais.getValueAt(index, 2).toString();
-                        
+
             txtCodMaterial.setText(cod);
             txtNomeMate.setText(nome);
-            txtQuantMaterial.setText(quant);
+            spnQuantMat.setValue(Integer.parseInt(quant));
         }
-    
+
     }//GEN-LAST:event_tableMateriaisKeyReleased
 
     private void tableMateriaisMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tableMateriaisMouseClicked
         int index = tableMateriais.getSelectedRow();
-        
-        if(index != -1){
+
+        if (index != -1) {
             String cod = tableMateriais.getValueAt(index, 0).toString();
             String nome = tableMateriais.getValueAt(index, 1).toString();
             String quant = tableMateriais.getValueAt(index, 2).toString();
-                        
+
             txtCodMaterial.setText(cod);
             txtNomeMate.setText(nome);
-            txtQuantMaterial.setText(quant);
+            spnQuantMat.setValue(Integer.parseInt(quant));
         }
     }//GEN-LAST:event_tableMateriaisMouseClicked
 
@@ -490,12 +511,12 @@ public class GerenciaBOM extends javax.swing.JFrame {
 
             m.setId(listMat.get(index).getId());
             m.setNome(txtNomeMate.getText());
-            m.setCod(Long.parseLong(txtCodMaterial.getText()));
-            m.setQuant(Integer.parseInt(txtQuantMaterial.getText()));
+            m.setCod(txtCodMaterial.getText());
+            m.setQuant((int) spnQuantMat.getValue());
 
             dao.update(m);
             carregarListaMatCompleta(listProd.get(idProd).getId());
-        }else{
+        } else {
             JOptionPane.showMessageDialog(null, "Nenhum Material selecionado!");
         }
     }//GEN-LAST:event_btEditarMatMouseClicked
@@ -516,6 +537,30 @@ public class GerenciaBOM extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Nenhum produto selecionado!");
         }
     }//GEN-LAST:event_btExcluirMatMouseClicked
+
+    private void txtBuscaMateCaretUpdate(javax.swing.event.CaretEvent evt) {//GEN-FIRST:event_txtBuscaMateCaretUpdate
+        int index = listProdutos.getSelectedIndex();
+        String busca = txtBuscaMate.getText();
+        MaterialDAO dao = new MaterialDAO();
+
+        if (index != -1) {
+            if (!busca.equals("")) {
+                listMat.clear();
+                carregarListaMatBusca(busca, listProd.get(index).getId());
+            } else {
+                listMat.clear();
+                listMat = dao.read(listProd.get(index).getId());
+                carregarListaMatCompleta(listProd.get(index).getId());
+            }
+        }
+    }//GEN-LAST:event_txtBuscaMateCaretUpdate
+
+    private void spnQuantMatStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_spnQuantMatStateChanged
+        int value = (int) spnQuantMat.getValue();
+        if (value < 0) {
+            spnQuantMat.setValue(0);
+        }
+    }//GEN-LAST:event_spnQuantMatStateChanged
 
     /**
      * @param args the command line arguments
@@ -572,13 +617,13 @@ public class GerenciaBOM extends javax.swing.JFrame {
     private javax.swing.JLabel lblErroNomeMat;
     private javax.swing.JLabel lblErroNomeProd;
     private javax.swing.JList<String> listProdutos;
+    private javax.swing.JSpinner spnQuantMat;
     private javax.swing.JTable tableMateriais;
     private javax.swing.JTextField txtBuscaMate;
     private javax.swing.JTextField txtBuscaProd;
     private javax.swing.JTextField txtCodMaterial;
     private javax.swing.JTextField txtNomeMate;
     private javax.swing.JTextField txtNomeProduto;
-    private javax.swing.JTextField txtQuantMaterial;
     // End of variables declaration//GEN-END:variables
 
     private void carregarListaProdCompleta() {
@@ -605,9 +650,9 @@ public class GerenciaBOM extends javax.swing.JFrame {
         }
     }
 
-    private void carregarListaMatBusca(String nome) {
+    private void carregarListaMatBusca(String nome, int index) {
         MaterialDAO dao = new MaterialDAO();
-        List<Material> mat = dao.search(nome);
+        List<Material> mat = dao.search(nome, index);
         atualizarMateriais(mat);
     }
 
